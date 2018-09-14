@@ -175,7 +175,7 @@ export default {
 
         },
         // finally 实现的方式
-        test10(){
+        test10(){ 
             Promise.prototype.finally = callback =>{
                 let p = this.constructor;
                 return this.then(
