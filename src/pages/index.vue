@@ -183,8 +183,56 @@ export default {
                     reason => p.resolve(callback()).then(()=>{throw reason})
                 )
             }
-        }
-       
+        },
+        // promise all
+        // all 的执行条件 都变成 fulfilled 或者 有一个是 rejected
+        // 才会调用Promise.all 方法后面的回调函数
+        testAll1(){
+            const promise = [2,3,5,7,11,13].map(id=>{
+                console.log(id);
+                return this.getJSON('/post/'+id+".json")
+            })
+            Promise.all(promise).then((posts)=>{
+                console.log(posts)
+            }).catch((err)=>{
+                console.log(err)
+            })
+        },
+        // 只有都兩個異步函数都执行完，才会执行回调函数
+        testAll2(){
+            const databasePromise = connectDatabase()
+            const booksPromise = databasePromise.then(findAllBooks)
+            const userPromise = databasePromise.then(getCurrentUser)
+            Promise.all([
+                booksPromise,
+                userPromise
+            ])
+            .then(([books,user])=> pickTopRecommentations(books,user));
+        },
+        // 作为参数的promise的实例，自己定义的catch方法报错，
+        // 不会触发 Promise.all() 的catch方法
+        testAll3(){
+            const p1 = new Promise ((resolve,reject)=>{
+                resolve('hello')
+            })
+            .then(res =>res)
+            .catch(err=>err)
+            const p2 = new Promise((reslove,reject)=>{
+                throw new Error('报错')
+            })
+            .then(res => res)
+// 如果没有这个方法，就会执行Promise.all 的 catch 方法
+            // .catch(err => err) 
+            Promise.all([p1,p2])
+            .then(res=>console.log(res))
+            .catch(e=>console.log(e+1111))
+        },
+        /**
+         * 将对象转为 Promise 对象， Promise.reolve
+         */
+        testA(){
+            
+        },
     },
     created(){
         // this.test1();
@@ -194,7 +242,10 @@ export default {
         // this.test6();
         // this.test7();
         // this.test8();
-        this.test9();
+        // this.test9();
+        // this.testAll1();
+        // this.testAll2();
+        this.testAll3()
     }
 }
 </script>
