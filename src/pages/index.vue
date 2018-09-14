@@ -231,8 +231,93 @@ export default {
          * 将对象转为 Promise 对象， Promise.reolve
          */
         testA(){
-            
+            const jsPromise = Promise.resolve($ajax('/whatever.json'))
         },
+        /**
+         * Promise.rejest
+         */
+        testB(){
+            const p = Promise.reject('出错啦88')
+            // 等同于
+            const pp = new Promise((resolve,reject)=> reject('出错啦999'))
+            pp.then(null,(s)=>{
+                console.log(s)
+            })
+            /**
+             * Promise.reject()方法的参数，会原封不动的作为reject的理由
+             * 变成后续方法的参数
+             */
+            const thenable={
+                then(resolve,rejest){
+                    reject('cuocuocuo')
+                }
+            }
+            Promise.reject(thenable)
+            .catch(e=>{
+                console.log(e===thenable)
+            })
+        },
+        /**
+         * Promise.try()
+         * 不区分函数是异步还是同步的，但是想用Promise处理
+         * 因为这样就可以不管是否包含异步操作，都用then 方法指定下一步流程
+         * 用catch 方法处理抛出的错误
+         */
+        fun1(){
+// async
+            const f1 = ()=> console.log('now1');
+// 匿名函数 会立即执行里面的async
+            ( async ()=> f1() )();
+            /**
+             *  (async ()=>f())()
+             * .then((res)=>{console.log(res)})
+             * .catch((err)=>{console.log(err)})
+             */
+            console.log('next1');
+// new promise
+            const f2=()=>console.log('now2');
+            (
+                ()=> new Promise(
+                    resolve => resolve(f2())
+                )
+            )()
+            console.log('next2');
+// promise.try
+            const f = ()=> console.log('now');
+            Promise.try(f);
+            console.log('next')
+        },
+        fun2(){
+            function getUsername(userId){
+                return database.users.get({id:userId})
+                .then(function(user){
+                    return user.name
+                })
+            }
+            /**
+             * 上面代码中，database.users.get()返回一个 Promise 对象，
+             * 如果抛出异步错误，可以用catch方法捕获，就像下面这样写。
+             * database.users.get({id: userId})
+                .then(...)
+                .catch(...)
+             */
+            /**但是database.users.get()可能还会抛出同步错误
+             * （比如数据库连接错误，具体要看实现方法），
+             * 这时你就不得不用try...catch去捕获。
+             * try {
+                database.users.get({id: userId})
+                .then(...)
+                .catch(...)
+                } catch (e) {
+                // ...
+                }
+             */
+// 统一用 promise.catch() 捕获所有同步和异步的错误 
+            Promise.try(data.users.get({id:userId}))
+            .then()
+            .catch()
+        }
+
     },
     created(){
         // this.test1();
@@ -245,7 +330,9 @@ export default {
         // this.test9();
         // this.testAll1();
         // this.testAll2();
-        this.testAll3()
+        // this.testAll3();
+        // this.testB();
+        this.fun1();
     }
 }
 </script>
