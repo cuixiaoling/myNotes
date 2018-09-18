@@ -157,15 +157,96 @@ export default {
             genObj.next('a');
             genObj.next('b');
         },
-        ginA(){
-            function* objectEntries(obj){
-                let propKeys = Reflect.ownKeys(obj);
-                for(let propKey of propKeys){
-                    yield [propKey,obj[propKey]];
-                }
-                let jane = {first:'Jane',last:'Doe'};
+        funA(){
+            function* objectEntries(obj) {
+            let propKeys = Reflect.ownKeys(obj);
+
+            for (let propKey of propKeys) {
+                yield [propKey, obj[propKey]];
             }
+            }
+
+            let jane = { first: 'Jane', last: 'Doe' };
+
+            for (let [key, value] of objectEntries(jane)) {
+            console.log(`${key}: ${value}`);
+            }
+        },
+        funB(){
+            function* objectEntries() {
+            let propKeys = Object.keys(this);
+
+            for (let propKey of propKeys) {
+                yield [propKey, this[propKey]];
+            }
+            }
+
+            let jane = { first: 'Jane', last: 'Doe' };
+
+            jane[Symbol.iterator] = objectEntries;
+
+            for (let [key, value] of jane) {
+            console.log(`${key}: ${value}`);
+            }
+        },
+        /**
+         * for...of 循环
+         * (...) 扩展运算符
+         * 解构赋值
+         * Array.from 方法
+         */
+        funC(){
+            function* numbers(){
+                yield 1
+                yield 2
+                return 3
+                yield 4
+            }
+            // 扩展运算符
+            console.log([...numbers()])
+            // Array.from 方法
+            console.log(Array.from(numbers()))
+            // 解构赋值
+            let [x,y] = numbers();
+            console.log(x,y)
+            // for...of 循环
+            for (let n of numbers()){
+                console.log(n);
+            }
+        },
+        /**
+         * Gnerator.prototype.throw();
+         */
+        funD(){
+            var g = function* (){
+                try{
+                    yield;
+                }catch(e){
+                    console.log('内部捕获',e);
+                }
+            }
+            var i = g();
+            i.next();
+            try{
+                i.throw('a');
+                i.throw('b');
+            }catch(e){
+                console.log('外部捕获',e);
+            }
+        },
+        funE(){
+            var g = function* (){
+                try{
+                    yield;
+                }catch(e){
+                    console.log('內部捕获2',e)
+                }
+            }
+            var i =g();
+            i.next();
+            i.throw(new Error('出错啦'))
         }
+
 
     },
     created(){
@@ -176,7 +257,11 @@ export default {
         // this.fun6();
         // this.fun7();
         // this.fun8();
-        this.fun9();
+        // this.fun9();
+        // this.funA();
+        // this.funC();
+        // this.funD();
+        this.funE();
     }
 }
 </script>
