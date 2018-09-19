@@ -245,6 +245,37 @@ export default {
             var i =g();
             i.next();
             i.throw(new Error('出错啦'))
+        },
+        /**
+         * yield* 表达式，
+         * 用来在一个Generaor函数里面执行另一个 Generator函数
+         */
+        funF(){
+            function* foo(){
+                yield 'a';
+                yield 'b';
+            }
+            function* bar(){
+                yield 'x';
+                yield* foo();
+                yield 'y';
+            }
+            for(let v of bar()){
+                console.log(v);
+            }
+        },
+        f1(){
+            function* genFuncWithReturn() {
+            yield 'a';
+            yield 'b';
+            return 'The result';
+            }
+            function* logReturned(genObj) {
+            let result = yield* genObj;
+            console.log(result);
+            }
+
+            [...logReturned(genFuncWithReturn())]
         }
 
 
@@ -261,7 +292,9 @@ export default {
         // this.funA();
         // this.funC();
         // this.funD();
-        this.funE();
+        // this.funE();
+        // this.funF();
+        this.f1();
     }
 }
 </script>
