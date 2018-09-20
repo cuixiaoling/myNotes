@@ -276,6 +276,70 @@ export default {
             }
 
             [...logReturned(genFuncWithReturn())]
+        },
+        f2(){
+            /*
+                F 內部的this對象绑定obj对象
+            */
+            function* F(){
+                this.a = 1;
+                yield this.b = 2;
+                yield this.c = 3;
+            }
+            var obj = {};
+            var f = F.call(obj);
+            console.log(f.next());
+            console.log(f.next());
+            console.log(f.next());
+            console.log(obj.a)
+            console.log(obj.b)
+            console.log(obj.c)
+        },
+        /*  执行的是遍历器对象f，但是生成的对象实例是obj
+            将这两个对象统一
+        */
+        f3(){
+            // 一个办法就是将obj换成F.prototype。
+            {
+                function* F(){
+                    this.a =1;
+                    yield this.b = 2;
+                    yield this.c = 3;
+                }
+                var f = F.call(F.prototype);
+                f.next();
+                f.next();
+                f.next();
+                f.a // 1
+                f.b // 2
+                f.c // 3
+                console.log(f.c);
+            }
+            // 再将F改成构造函数，就可以对它执行new命令了
+            {
+                function* gen() {
+                  this.a = 1;
+                  yield this.b = 2;
+                  yield this.c = 3;
+                }
+
+                function F() {
+                  return gen.call(gen.prototype);
+                }
+
+                var f = new F();
+
+                f.next();  // Object {value: 2, done: false}
+                f.next();  // Object {value: 3, done: false}
+                f.next();  // Object {value: undefined, done: true}
+
+                f.a // 1
+                f.b // 2
+                f.c // 3
+                console.log(f.c);
+
+            }
+
         }
 
 
@@ -294,7 +358,9 @@ export default {
         // this.funD();
         // this.funE();
         // this.funF();
-        this.f1();
+        // this.f1();
+        // this.f2();
+        this.f3();
     }
 }
 </script>
