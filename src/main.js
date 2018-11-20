@@ -3,6 +3,12 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import axios from 'axios'
+Vue.prototype.$axios = axios;
+// console.log(Vue,'vue')
+// console.log(this)
+// console.log(axios)
+// console.log(Vue.prototype.$axios)
 
 Vue.config.productionTip = false
 

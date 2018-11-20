@@ -2,91 +2,88 @@
 	<div>async</div>
 </template>
 <script type="text/javascript">
+	import axios from 'axios'
 	export default{
 		methods:{
-			fun1(){
-				async function getStockPriceByName(name) {
-				  const symbol = await getStockSymbol(name);
-				  const stockPrice = await getStockPrice(symbol);
-				  return stockPrice;
-				}
+			async fun5 (){
+				let getFoo = ()=>{
+					this.$axios.get('http://47.100.54.97:8080/soar_fish/cargo/getCargo').then((res)=>{
+						console.log(res,'货种接口')
+					}).catch(()=>{
 
-				getStockPriceByName('goog').then(function (result) {
-				  console.log(result);
-				});
-			},
-			fun2(){
-				function timeout(ms){
-					return new Promise((resolve)=>{
-						setTimeout(resolve,ms);
 					})
+				};
+				let getBar = ()=>{
+					this.$axios.get('http://47.100.54.97:8080/soar_fish/getSluiceInfo').then((res)=>{
+						console.log(res,'闸口接口')
+					})
+				};
+				let bar2 = await getBar();
+				let foo2 = await getFoo();
+			},
+			// async fun1(){
+			fun1(){
+				new Promise((resolve)=>{
+				// await new Promise((resolve)=>{
+					this.$axios.get('http://47.100.54.97:8080/soar_fish/getSluiceInfo').then((res)=>{
+						console.log(res,'闸口信息')
+						resolve('fun1');
+					})
+				})
+			},
+			// async fun2(){
+			fun2(){
+				new Promise((resolve)=>{
+				// await new Promise((resolve)=>{
+					this.$axios.get('http://47.100.54.97:8080/soar_fish/cargo/getCargo').then((res)=>{
+						console.log(res,'货种接口')
+						resolve();
+					})
+				})
+			},
+			fun3(){
+				console.log('fun3')
+			},
+			fun4(){
+				console.log('fun4')
+			},
+			async asyncPrint(){
+				// console.log(this.fun1().then((res)=>{console.log(res,'000')}),'888')
+				// console.log(this.fun1())
+				// await this.fun4();
+				// await this.fun3();
+				// console.log('1111')
+				await this.fun2();
+				await this.fun1();
+				// console.log('2222')
+			},
+			/* async */
+			fun6(){
+				async function timeout(ms){
+					await new Promise((resolve)=>{
+						setTimeout(resolve,ms);
+					});
 				}
 				async function asyncPrint(value,ms){
 					await timeout(ms);
 					console.log(value);
 				}
-				asyncPrint('hello world',5000)
-			},
-			/*
-				async 函数内部的return 会成为then方法的回调函数
-			*/
-			fun3(){
-				async function f (){
-				// let f = async function(){
-					try{
-						await Promise.reject('出错了');
-					}catch(e){
-
-					}
-					return await Promise.resolve('hello world22');
-				}
-				f().then((v)=>console.log(v));
-			},
-			fun4(){
-				/*
-					防止 第一个await 命令后面的promise对象，运行结果可能是
-					rejected
-				*/
-				async function myFunction() {
-				  try {
-				    await somethingThatReturnsAPromise();
-				  } catch (err) {
-				    console.log(err);
-				  }
-				}
-
-				// 另一种写法
-
-				async function myFunction() {
-				  await somethingThatReturnsAPromise()
-				  .catch(function (err) {
-				    console.log(err);
-				  });
-				}
-				/*
-					多个await命令后面的异步操作，如果不存在继发关系，最好让他们同时触发
-				*/
-				let fun = async ()=>{
-
-					let getFoo = function(){};
-					let getBar = function(){};
-					
-					let foo = await getFoo();
-					let bar = await getBar();
-					// 写法一
-					let [foo1,bar1] = await Promise.all([getFoo(),grtBar()])
-					// 写法二
-					let fooPromise = getFoo();
-					let barPromise = getBar();
-					let foo2 = await fooPromise;
-					let bar2 = await barPromise;
-				}
+				asyncPrint('hello world',1000)
 			}
 		},
 		created(){
-			// this.fun1();
-			// this.fun2();
-			this.fun3();
+			this.asyncPrint();
+		},
+		mounted(){
+			/**
+			 * this VueComponent
+			 * this methods -> ()=>{} -> this -> 上一层
+			 * this methods -> function(){} -> this -> VueComponent
+			 * await 后面跟的是 promise
+			 * 如果被调用的方法里面是一个异步的需要先完成的方法，就需要await
+			 * async 里面可以用 await
+			 * promise 为什么 succese 炫耀放 reject()
+			 */
 		}
 	}
 </script>

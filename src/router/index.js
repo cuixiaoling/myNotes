@@ -5,6 +5,7 @@ import test1 from '@/test/test1'
 import test2 from '@/test/test2'
 import test3 from '@/test/test3'
 import test4 from '@/test/test4'
+import test5 from '@/test/test5'
 
 Vue.use(Router)
 
@@ -32,6 +33,10 @@ export default new Router({
       path: '/test4',
       name: 'test4',
       component: test4
+    },{
+      path: '/test5',
+      name: 'test5',
+      component: test5
     },
   ]
 })
