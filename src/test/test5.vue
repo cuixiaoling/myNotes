@@ -66,6 +66,7 @@ export default {
                         return;
                     }
                     if(this.status===200){
+                        console.log(this.response,'返回值')
                         let obj = this.response
 						if (typeof obj !== 'object') {
 							obj = JSON.parse(obj);
@@ -84,6 +85,14 @@ export default {
                 client.send();
             });
             return promise;
+        },
+        fun3(){
+            const p1 = new Promise(function(resolve,reject){
+                setTimeout(() => {
+                    
+                }, timeout);
+            })
+
         }
     },
     created(){
@@ -97,11 +106,13 @@ export default {
         //     this.fun1();
         // })
         this.getJson("http://47.100.54.97:8080/soar_fish/getSluiceInfo").then((json)=>{
-            console.log('Contents:'+json)
+            // console.log('Contents:'+json)
             console.log(json)
             // console.log('Contents:'+JSON.parse(JSON.stringify(json)))
         }, function(error) {
             console.error('出错了', error);
+            // JSON.stringify
+            // JSON.parse
         })
         return;
         this.fun2() 
